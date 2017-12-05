@@ -43,7 +43,7 @@ describe("EnableTravis", () => {
     enableTravis.githubToken = token;
     enableTravis.retries = 1;
 
-    it("should enable Travis CI on a repo", done => {
+    it("should enable a repo", done => {
         let responseMessage: string;
         const ctx = {
             messageClient: {
@@ -58,13 +58,38 @@ describe("EnableTravis", () => {
         mock
             .onGet(`${ghApiUrl}repos/${slug}`).replyOnce(200, { private: false })
             .onPost(`${ciApiUrl}/auth/github`).replyOnce(200, { access_token: "peoplegottalotofnerve" })
-            .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(200, { repo: { id: 2009 } })
+            .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(200, { repo: { id: 2009, active: false } })
             .onPut(`${ciApiUrl}/hooks`).replyOnce(200);
 
         enableTravis.handle(ctx)
             .then(result => {
                 assert(result.code === 0);
                 assert(responseMessage === `Successfully enabled Travis CI builds on ${slug}`);
+            }).then(() => done(), done);
+
+    });
+
+    it("should do nothing if repo already enabled", done => {
+        let responseMessage: string;
+        const ctx = {
+            messageClient: {
+                respond(msg: string): Promise<any> {
+                    responseMessage = msg;
+                    return Promise.resolve(msg);
+                },
+            },
+        } as HandlerContext;
+
+        const mock = new MockAdapter(axios);
+        mock
+            .onGet(`${ghApiUrl}repos/${slug}`).replyOnce(200, { private: false })
+            .onPost(`${ciApiUrl}/auth/github`).replyOnce(200, { access_token: "peoplegottalotofnerve" })
+            .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(200, { repo: { id: 2009, active: true } });
+
+        enableTravis.handle(ctx)
+            .then(result => {
+                assert(result.code === 0);
+                assert(responseMessage === `Travis CI builds already enabled on ${slug}`);
             }).then(() => done(), done);
 
     });
@@ -90,7 +115,7 @@ describe("EnableTravis", () => {
                 synced = true;
                 return [200];
             })
-            .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(200, { repo: { id: 2009 } })
+            .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(200, { repo: { id: 2009, active: false } })
             .onPut(`${ciApiUrl}/hooks`).replyOnce(200);
 
         enableTravis.handle(ctx)
@@ -102,7 +127,7 @@ describe("EnableTravis", () => {
 
     });
 
-    it("should deal with some failures when enabling Travis CI on a repo", done => {
+    it("should deal with some failures when enabling a repo", done => {
         let responseMessage: string;
         const ctx = {
             messageClient: {
@@ -124,7 +149,7 @@ describe("EnableTravis", () => {
             .onPost(`${ciApiUrl}/users/sync`).replyOnce(409)
             .onPost(`${ciApiUrl}/users/sync`).replyOnce(200)
             .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(404)
-            .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(200, { repo: { id: 2009 } })
+            .onGet(`${ciApiUrl}/repos/${slug}`).replyOnce(200, { repo: { id: 2009, active: false } })
             .onPut(`${ciApiUrl}/hooks`).replyOnce(500)
             .onPut(`${ciApiUrl}/hooks`).replyOnce(200);
 

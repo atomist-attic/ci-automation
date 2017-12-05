@@ -93,8 +93,13 @@ export class EnableTravis implements HandleCommand {
                                         `travis:getRepoAfterSync:${slug}`, retryConfig));
                             });
                     })
-                    .then(travisRepo => travisRepo.data.repo.id as number)
-                    .then(repoId => {
+                    .then(travisRepo => {
+                        const repoId = travisRepo.data.repo.id as number;
+                        const repoActive = travisRepo.data.repo.active as boolean;
+                        if (repoActive === true) {
+                            return ctx.messageClient.respond(`Travis CI builds already enabled on ${slug}`)
+                                .then(success);
+                        }
                         const travisHookUrl = `${travisBaseUrl}/hooks`;
                         const travisHookData = {
                             hook: {
@@ -103,10 +108,10 @@ export class EnableTravis implements HandleCommand {
                             },
                         };
                         return doWithRetry(() => axios.put(travisHookUrl, travisHookData, { headers: travisHeaders }),
-                            `travis:putHook:${slug}`, retryConfig);
-                    })
-                    .then(() => ctx.messageClient.respond(`Successfully enabled Travis CI builds on ${slug}`))
-                    .then(success);
+                            `travis:putHook:${slug}`, retryConfig)
+                            .then(() => ctx.messageClient.respond(`Successfully enabled Travis CI builds on ${slug}`))
+                            .then(success);
+                    });
             })
             .catch(err => {
                 const errMsg = `${err}`;
