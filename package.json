@@ -1,7 +1,7 @@
 {
   "name": "@atomist/ci-automation",
-  "version": "0.2.0",
-  "description": "Atomist automation seed project",
+  "version": "0.1.0",
+  "description": "Continuous integration automations",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
@@ -15,17 +15,26 @@
   "keywords": [
     "atomist",
     "automation",
-    "seed"
+    "ci",
+    "travis"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.3.5",
-    "app-root-path": "^2.0.1"
+    "@atomist/automation-client": "https://r.atomist.com/Byrp6UrVbf",
+    "app-root-path": "^2.0.1",
+    "axios": "^0.17.1",
+    "cfenv": "^1.0.4",
+    "logzio-nodejs": "^0.4.5",
+    "serialize-error": "^2.1.0",
+    "winston-logzio": "^1.0.3"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
+    "@types/axios-mock-adapter": "^1.9.0",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.46",
     "@types/power-assert": "^1.4.29",
+    "axios-mock-adapter": "^1.10.0",
+    "copyfiles": "^1.2.0",
     "espower-typescript": "^8.0.2",
     "graphql-code-generator": "^0.8.13",
     "mocha": "^3.5.3",
@@ -36,7 +45,7 @@
     "ts-node": "^3.3.0",
     "tslint": "^5.4.3",
     "typedoc": "^0.8.0",
-    "typescript": "^2.5.3",
+    "typescript": "2.5.3",
     "typescript-formatter": "^6.0.0"
   },
   "directories": {
@@ -51,15 +60,15 @@
     "clean:dist": "npm-run-all clean clean:npm",
     "clean:js": "rimraf '{src,test}/**/*.js'",
     "clean:npm": "rimraf node_modules",
-    "compile": "npm-run-all git:info gql:gen compile:ts",
-    "compile:gql": "copyfiles './src/**/*.graphql' ./build",
+    "compile": "npm-run-all git:info compile:gql compile:ts",
+    "compile:gql": "copyfiles 'src/**/*.graphql' build",
     "compile:ts": "tsc --project .",
     "fmt": "tsfmt --replace",
     "git:info": "atomist git",
-    "gql:gen": "gql-gen --file node_modules/@atomist/automation-client/graph/schema.cortex.json --template typescript -m --out src/typings 'graphql/**/*.graphql'",
+    "gql:gen": "gql-gen --file node_modules/@atomist/automation-client/graph/schema.cortex.json --template typescript --no-schema --out src/typings '{graphql,src}/**/*.graphql'",
     "lint": "tslint --format verbose --project . --exclude '{build,node_modules}/**' '**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
-    "start": "atomist start",
+    "start": "atomist start --no-install --no-compile",
     "test": "mocha --require espower-typescript/guess 'test/**/*.ts'",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals",
