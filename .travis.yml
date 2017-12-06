@@ -39,7 +39,7 @@ deploy:
   password: "$CF_PASSWORD"
   organization: atomist
   application: ci-automation-staging
-  space: staging
+  space: development
   on:
     branch: master
 - provider: cloudfoundry
