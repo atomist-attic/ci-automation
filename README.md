@@ -1,30 +1,62 @@
 # @atomist/ci-automation
 
+[![npm version](https://badge.fury.io/js/%40atomist%2Fci-automation.svg)](https://badge.fury.io/js/%40atomist%2Fci-automation)
 [![Build Status](https://travis-ci.org/atomist/ci-automation.svg?branch=master)](https://travis-ci.org/atomist/ci-automation)
 
-This repository contains examples demonstrating use of
-the [Atomist][atomist] API.  You will find examples illustrating:
+This repository contains Atomist automation for continuous integration
+platforms like [Travis CI][travis-ci] and [CircleCI][circleci].  These
+automation use the [`@atomist/automation-client`][client] node module
+to implement a client that connects to the Atomist API.
 
--   Creating bot commands using _command handlers_
--   Responding to DevOps events, e.g., commits pushed to a repository,
-    using _event handlers_
-
-These examples use the [`@atomist/automation-client`][client] node
-module to implement a local client that connects to the Atomist API.
-
+[travis-ci]: https://travis-ci.org/
+[circlci]: https://circleci.com/
 [client]: https://github.com/atomist/automation-client-ts (@atomist/automation-client Node Module)
 
 ## Prerequisites
 
-### Access to Atomist testing environment
+Below are brief instructions on how to get started running this
+project yourself.  If you just want to use the functionality this
+project provides, see the [Atomist documentation][docs].  For more
+detailed information on developing automations, see
+the [Atomist Developer Guide][dev].
 
-To get access to this preview, please reach out to members of Atomist
-in the `#support` channel of [atomist-community Slack team][slack].
+[docs]: https://docs.atomist.com/ (Atomist User Guide)
+[dev]: https://docs.atomist.com/developer/ (Atomist Developer Guide)
 
-You'll receive an invitation to a [Slack team][play-slack]
+### Slack and GitHub
+
+Atomist automations work best when connected to [Slack][slackhq]
+and [GitHub][gh].  If you do not have access to a Slack team and/or
+GitHub organization, it is easy to create your own.
+
+-   Create a [Slack team][slack-team]
+-   Create a [GitHub organization][gh-org]
+
+In your Slack team, install the Atomist app in Slack, click the button
+below.
+
+<p align="center">
+ <a href="https://atm.st/2wiDlUe">
+  <img alt="Add to Slack" height="50" width="174" src="https://platform.slack-edge.com/img/add_to_slack@2x.png" />
+ </a>
+</p>
+
+Once installed, the Atomist bot will guide you through connecting
+Atomist, Slack, and GitHub.
+
+If you'd rather not set up your own Slack team and GitHub
+organization, please reach out to members of Atomist in the `#support`
+channel of [atomist-community Slack team][slack].  You'll receive an
+invitation to a [Slack team][play-slack]
 and [GitHub organization][play-gh] that can be used to explore this
 new approach to writing and running automations.
 
+> _The Slack team ID for atomist-playground is `T7GMF5USG`._
+
+[slackhq]: https://slack.com/ (Slack)
+[gh]: https://github.com/ (GitHub)
+[slack-team]: https://slack.com/get-started#create (Create a Slack Team)
+[gh-org]: https://github.com/account/organizations/new (Create a GitHub Organization)
 [play-slack]: https://atomist-playground.slack.com (Atomist Playground Slack)
 [play-gh]: https://github.com/atomist-playground (Atomist Playground GitHub Organization)
 
@@ -39,6 +71,9 @@ v8.4.0
 $ npm -v
 5.4.1
 ```
+
+The `node` version should be 8 or greater and the `npm` version should
+be 5 or greater.
 
 [node]: https://nodejs.org/ (Node.js)
 
@@ -57,41 +92,33 @@ $ npm run build
 ### Configuring your environment
 
 If this is the first time you will be running an Atomist API client
-locally, you should first configure your system using the
-`atomist-config` script:
+locally, you should first configure your system using the `atomist`
+script:
 
 ```
-$ `npm bin`/atomist config [SLACK_TEAM_ID]
+$ `npm bin`/atomist config
 ```
 
 The script does two things: records what Slack team you want your
 automations running in and creates
-a [GitHub personal access token][token] with "read:org" scope.
+a [GitHub personal access token][token] with "repo" and "read:org"
+scopes.
 
-You must run the automations in a Slack team of which you are a
-member.  You can get the Slack team ID by typing `team` in a DM to the
-Atomist Bot.  If you do not supply the Slack team ID on the command
-line, the script will prompt you to enter it.
+The script will prompt you for you Slack team ID, or you can supply it
+using the `--slack-team TEAM_ID` command-line option.  You must run
+the automations in a Slack team of which you are a member.  You can
+get the Slack team ID by typing `team` in a DM to the Atomist bot.
 
-> *The Slack team ID for atomist-playground is `T7GMF5USG`.*
-
-The `atomist-config` script will prompt you for your GitHub
-credentials.  It needs them to create the GitHub personal access
-token.  Atomist does not store your credentials and only writes the
-token to your local machine.
+The script will prompt you for your GitHub credentials.  It needs them
+to create the GitHub personal access token.  Atomist does not store
+your credentials and only writes the generated token to your local
+machine.
 
 The Atomist API client authenticates using a GitHub personal access
 token.  The Atomist API uses the token to confirm you are who you say
-you are and are in a GitHub org connected to the Slack team in which
-you are running the automations.  In addition, the Atomist API only
-allows members of the GitHub team `atomist-automation` to authenticate
-and register a new client.  You will have to create a team in your
-GitHub organization named `atomist-automation` and add the users who
-want to create and register automations to it.
-
-> *If you followed the instructions above and have been invited to
-> the [atomist-playground][play-gh] GitHub organization, you will have
-> been added to this team in that organization.*
+you are and are in a GitHub organization connected to the Slack team
+in which you are running the automations.  In addition, it uses the
+token when performing any operations that access the GitHub API.
 
 [token]: https://github.com/settings/tokens (GitHub Personal Access Tokens)
 
@@ -121,12 +148,13 @@ You will need to install [node][] to build and test this project.
 
 Command | Reason
 ------- | ------
-`npm install` | to install all the required packages
-`npm start` | to start the Atomist automation client
+`npm install` | install all the required packages
+`npm run build` | lint, compile, and test
+`npm start` | start the Atomist automation client
 `npm run autostart` | run the client, refreshing when files change
-`npm run lint` | to run tslint against the TypeScript
-`npm run compile` | to compile all TypeScript into JavaScript
-`npm test` | to run tests and ensure everything is working
+`npm run lint` | run tslint against the TypeScript
+`npm run compile` | compile all TypeScript into JavaScript
+`npm test` | run tests and ensure everything is working
 `npm run autotest` | run tests continuously
 `npm run clean` | remove stray compiled JavaScript files and build directory
 
@@ -154,5 +182,5 @@ the contents of the release notes.
 Created by [Atomist][atomist].
 Need Help?  [Join our Slack team][slack].
 
-[atomist]: https://www.atomist.com/
-[slack]: https://join.atomist.com
+[atomist]: https://www.atomist.com/ (Atomist - Development Automation)
+[slack]: https://join.atomist.com (Atomist Community Slack)
