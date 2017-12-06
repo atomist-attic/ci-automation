@@ -1,6 +1,6 @@
 {
   "name": "@atomist/ci-automation",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Continuous integration automations",
   "author": "Atomist",
   "license": "Apache-2.0",
@@ -23,6 +23,7 @@
     "app-root-path": "^2.0.1",
     "axios": "^0.17.1",
     "cfenv": "^1.0.4",
+    "config": "^1.28.1",
     "logzio-nodejs": "^0.4.5",
     "serialize-error": "^2.1.0",
     "winston-logzio": "^1.0.3"
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
     "@types/axios-mock-adapter": "^1.9.0",
+    "@types/config": "0.0.33",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.46",
     "@types/power-assert": "^1.4.29",

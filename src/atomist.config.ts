@@ -16,8 +16,9 @@
 
 import { Configuration } from "@atomist/automation-client";
 import { initMemoryMonitoring } from "@atomist/automation-client/internal/util/memory";
-import { AutomationEventListener } from "@atomist/automation-client/server/AutomationEventListener";
+
 import * as appRoot from "app-root-path";
+import * as config from "config";
 
 import { EnableTravis } from "./commands/EnableTravis";
 import { secret } from "./util/secrets";
@@ -34,43 +35,49 @@ const logzioOptions: LogzioOptions = {
     token: secret("logzio.token", process.env.LOGZIO_TOKEN),
 };
 
-// Set up automation event listeners
-const listeners: AutomationEventListener[] = [];
-
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
     keywords: pj.keywords,
-    teamIds: [],
+    policy: config.get("policy"),
+    teamIds: config.get("teamIds"),
     token,
     commands: [EnableTravis],
-    listeners,
-    ws: {
-        enabled: true,
-    },
+    events: [],
+    listeners: [],
     http: {
         enabled: true,
         auth: {
             basic: {
-                enabled: false,
+                enabled: config.get("http.auth.basic.enabled"),
+                username: secret("dashboard.user"),
+                password: secret("dashboard.password"),
             },
             bearer: {
-                enabled: false,
+                enabled: config.get("http.auth.bearer.enabled"),
+                adminOrg: "atomisthq",
             },
         },
+    },
+    endpoints: {
+        api: config.get("endpoints.api"),
+        graphql: config.get("endpoints.graphql"),
     },
     applicationEvents: {
         enabled: true,
         teamId: "T29E48P34",
     },
     cluster: {
-        enabled: false,
-        workers: 2,
+        enabled: notLocal,
+        // worker: 2,
+    },
+    ws: {
+        enabled: true,
+        termination: {
+            graceful: true,
+        },
     },
 };
-if (process.env.NODE_ENV === "production") {
-    (configuration as any).groups = ["all"];
-}
+(configuration as any).groups = config.get("groups");
 
-// For now, we enable a couple of interesting memory and heap commands on this automation-client
-initMemoryMonitoring(`${appRoot.path}/node_modules/@atomist/automation-client/public/heap`);
+initMemoryMonitoring();
