@@ -9,6 +9,9 @@ branches:
   - "/^\\d+\\.\\d+\\.\\d+-\\d+$/"
 addons:
   apt:
+    sources:
+    - sourceline: "deb http://packages.cloudfoundry.org/debian stable main"
+      key_url: "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
     packages:
     - cf-cli
 env:
