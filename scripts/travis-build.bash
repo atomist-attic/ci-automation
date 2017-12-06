@@ -198,13 +198,20 @@ function npm-publish-prerelease () {
 }
 
 # create and push a Docker image
-# usage: docker-push VERSION
+# usage: docker-push IMAGE VERSION
 function docker-push () {
+    local image_name=$1
+    if [[ ! $image_name ]]; then
+        err "docker-push: missing required argument: NAME"
+        return 10
+    fi
+    shift
     local image_version=$1
     if [[ ! $image_version ]]; then
         err "docker-push: missing required argument: VERSION"
         return 10
     fi
+    shift
 
     if [[ ! $DOCKER_REGISTRY ]]; then
         msg "no Docker registry set"
@@ -212,14 +219,12 @@ function docker-push () {
         return 0
     fi
 
-    local repo_name=${TRAVIS_REPO_SLUG##*/}
-
     if ! docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" "$DOCKER_REGISTRY"; then
         err "failed to login to docker registry: $DOCKER_REGISTRY"
         return 1
     fi
 
-    local tag=$DOCKER_REGISTRY/$repo_name:$image_version
+    local tag=$DOCKER_REGISTRY/$image_name:$image_version
     if ! docker build . -t "$tag"; then
         err "failed to build docker image: '$tag'"
         return 1
@@ -231,6 +236,37 @@ function docker-push () {
     fi
 
     msg "built and pushed Docker image"
+}
+
+# push app to Cloud Foundry
+# usage: cf-push APP [SPACE]
+function cf-push () {
+    local app=$1
+    if [[ ! $app ]]; then
+        err "cf-push: missing required argument: APPLICATION"
+        return 10
+    fi
+    shift
+    local space=$1
+    if [[ ! $space ]]; then
+        space=production
+    fi
+
+    if [[ ! $CF_ORG ]]; then
+        msg "no Cloud Foundry org set"
+        msg "skipping Cloud Foundry push"
+        return 0
+    fi
+
+    if ! cf login -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$space"; then
+        err "failed to log in to Cloud Foundry"
+        return 1
+    fi
+
+    if ! cf push "$app"; then
+        err "failed to push '$app' to Cloud Foundry"
+        return 1
+    fi
 }
 
 # usage: main "$@"
@@ -286,10 +322,16 @@ function main () {
 
     [[ $TRAVIS_PULL_REQUEST == false ]] || return 0
 
+    local app=${TRAVIS_REPO_SLUG##*/}
     if [[ $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(m|rc)\.[0-9]+)?$ ]]; then
         msg "publishing NPM package version '$TRAVIS_TAG'"
         if ! npm-publish --access public; then
             err "failed to publish tag build: '$TRAVIS_TAG'"
+            return 1
+        fi
+        msg "pushing app to Cloud Foundry"
+        if ! cf-push "$app"; then
+            err "failed to push '$app' to Cloud Foundry"
             return 1
         fi
         if ! git-tag "$TRAVIS_TAG+travis.$TRAVIS_BUILD_NUMBER"; then
@@ -313,8 +355,14 @@ function main () {
         fi
         if [[ $TRAVIS_BRANCH == master ]]; then
             msg "building and pushing Docker image"
-            if ! docker-push "$prerelease_version"; then
+            if ! docker-push "$app" "$prerelease_version"; then
                 err "failed to build and push docker image"
+                return 1
+            fi
+            local staging_app=$app-staging
+            msg "pushing staging app to Cloud Foundry development space"
+            if ! cf-push "$staging_app" development; then
+                err "failed to push '$staging_app' to Cloud Foundry"
                 return 1
             fi
         fi
