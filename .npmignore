@@ -8,7 +8,7 @@ build/
 release/
 .travis.yml
 *.bash
-tsconfig.*
+tsconfig*.json
 tslint.json
 yarn.lock
 .vscode
