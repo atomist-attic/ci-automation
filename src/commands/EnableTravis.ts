@@ -55,6 +55,7 @@ export class EnableTravis implements HandleCommand {
     public githubToken: string;
 
     public retries = 5;
+    public minTimeout = 500;
 
     public handle(ctx: HandlerContext): Promise<HandlerResult> {
         const slug = `${this.owner}/${this.repo}`;
@@ -63,7 +64,10 @@ export class EnableTravis implements HandleCommand {
             Accept: "application/vnd.github.v3+json",
             Authorization: `token ${this.githubToken}`,
         };
-        const retryConfig = { retries: this.retries };
+        const retryConfig = {
+            minTimeout: this.minTimeout,
+            retries: this.retries,
+        };
         return doWithRetry(() => axios.get(githubRepoUrl, { headers: githubHeaders }),
             `github:getRepo:${slug}`, retryConfig)
             .then(ghRepo => ghRepo.data.private as boolean)
@@ -86,7 +90,10 @@ export class EnableTravis implements HandleCommand {
                             .catch(getRepoErr => {
                                 // force Travis to sync with GitHub
                                 const travisSyncUrl = `${travisBaseUrl}/users/sync`;
-                                const syncRetryConfig = { retries: 2 * this.retries };
+                                const syncRetryConfig = {
+                                    minTimeout: this.minTimeout,
+                                    retries: 2 * this.retries,
+                                };
                                 return doWithRetry(() => axios.post(travisSyncUrl, {}, { headers: travisHeaders }),
                                     `travis:userSync`, syncRetryConfig)
                                     .then(() => doWithRetry(() => axios.get(travisRepoUrl, { headers: travisHeaders }),

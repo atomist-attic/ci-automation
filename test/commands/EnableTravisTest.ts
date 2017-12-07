@@ -41,6 +41,7 @@ describe("EnableTravis", () => {
     enableTravis.owner = owner;
     enableTravis.githubApiUrl = ghApiUrl;
     enableTravis.githubToken = token;
+    enableTravis.minTimeout = 0;
     enableTravis.retries = 1;
 
     it("should enable a repo", done => {
@@ -157,9 +158,9 @@ describe("EnableTravis", () => {
             .then(result => {
                 assert(result.code === 0);
                 assert(responseMessage === `Successfully enabled Travis CI builds on ${slug}`);
-            }).then(() => done(), err => done(err));
+            }).then(() => done(), done);
 
-    }).timeout(10000);
+    });
 
     it("should fail when getting GitHUb repo fails", done => {
         let responseMessage: string;
@@ -182,9 +183,9 @@ describe("EnableTravis", () => {
                 const urlMsg = `: GET ${ghApiUrl}repos/${slug}`;
                 const errMsg = `Error: Request failed with status code ${errStatus}`;
                 assert(responseMessage === `Failed to enable Travis CI build on ${slug}${urlMsg}: \`${errMsg}\``);
-            }).then(() => done(), err => done(err));
+            }).then(() => done(), done);
 
-    }).timeout(5000);
+    });
 
     it("should fail when user sync never returns 200", done => {
         let responseMessage: string;
@@ -211,8 +212,8 @@ describe("EnableTravis", () => {
                 const urlMsg = `: POST ${ciApiUrl}/users/sync`;
                 const errMsg = `Error: Request failed with status code ${errStatus}`;
                 assert(responseMessage === `Failed to enable Travis CI build on ${slug}${urlMsg}: \`${errMsg}\``);
-            }).then(() => done(), err => done(err));
+            }).then(() => done(), done);
 
-    }).timeout(10000);
+    });
 
 });
