@@ -258,8 +258,11 @@ function cf-push () {
         return 0
     fi
 
-    if ! cf login -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$space"; then
-        err "failed to log in to Cloud Foundry"
+    local api_url=${CF_API:-https://api.run.pivotal.io}
+
+    if ! cf login -a "$api_url" -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$space"
+    then
+        err "failed to log in to Cloud Foundry at '$api_url'"
         return 1
     fi
 
