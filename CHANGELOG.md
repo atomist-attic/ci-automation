@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][]
 
-[Unreleased]: https://github.com/atomist/ci-automation/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/atomist/ci-automation/compare/0.3.1...HEAD
+
+## [0.3.1][]
+
+[0.3.1]: https://github.com/atomist/ci-automation/compare/0.3.1...0.3.1
+
+Spring release
+
+### Added
+
+-   Spring tag
 
 ## [0.3.0][]
 

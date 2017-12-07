@@ -1,6 +1,6 @@
 {
   "name": "@atomist/ci-automation",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Continuous integration automations",
   "author": "Atomist",
   "license": "Apache-2.0",
@@ -16,6 +16,7 @@
     "atomist",
     "automation",
     "ci",
+    "spring",
     "travis"
   ],
   "dependencies": {
