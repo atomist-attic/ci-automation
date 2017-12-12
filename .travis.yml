@@ -6,7 +6,7 @@ node_js:
 branches:
   except:
   - "/\\+travis\\.\\d+$/"
-  - "/^\\d+\\.\\d+\\.\\d+-\\d+$/"
+  - "/^\\d+\\.\\d+\\.\\d+-.*\\d+$/"
 addons:
   apt:
     sources:
