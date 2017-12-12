@@ -128,9 +128,18 @@ export class EnableTravis implements HandleCommand {
                 const urlMsg = (url) ? `:${method} ${url}` : "";
                 const errResponse = `Failed to enable Travis CI build on ${slug}${urlMsg}: \`${errMsg}\``;
                 return ctx.messageClient.respond(errResponse)
-                    .then(failure, failure);
+                    .then(() => failure(err), msgErr => failure(combineErrors(err, msgErr)));
             });
 
     }
 
+}
+
+export function combineErrors(...errs: Error[]): Error {
+    const combinedErr: Error = {
+        name: `CombinedError:${errs.map(e => e.name).join("+")}`,
+        message: `CombinedMessage:${errs.map(e => e.message).join("; ")}`,
+        stack: `CombinedStack:${errs.map(e => e.stack).join("\n")}`,
+    };
+    return combinedErr;
 }
