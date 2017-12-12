@@ -9,7 +9,7 @@ automation use the [`@atomist/automation-client`][client] node module
 to implement a client that connects to the Atomist API.
 
 [travis-ci]: https://travis-ci.org/
-[circlci]: https://circleci.com/
+[circleci]: https://circleci.com/
 [client]: https://github.com/atomist/automation-client-ts (@atomist/automation-client Node Module)
 
 ## Prerequisites
