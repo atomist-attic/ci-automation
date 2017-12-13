@@ -35,6 +35,9 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { CachingDirectoryManager } from "@atomist/automation-client/spi/clone/CachingDirectoryManager";
+import { updateYamlDocument } from "@atomist/yaml-updater/Yaml";
+
+import * as yaml from "js-yaml";
 
 import { combineErrors } from "./EnableTravis";
 
@@ -117,7 +120,79 @@ export function addWebhook(
 }
 
 export function addWebhookToTravis(project: Project, url: string): Promise<Project> {
+    const travisConfigPath = ".travis.yml";
+    const file = project.findFileSync(travisConfigPath);
+    if (!file) {
+        throw new Error(`File ${travisConfigPath} not found`);
+    }
+    const yml = file.getContentSync();
+    let travisConfig;
+    try {
+        travisConfig = yaml.safeLoad(yml);
+    } catch (e) {
+        throw new Error(`failed to parse Travis config ${travisConfigPath}: ${JSON.stringify(e)}`);
+    }
+    const notifications = standardizeNotifications(travisConfig.notifications);
+    if (!notifications.webhooks.urls.some(z => z === url)) {
+        notifications.webhooks.urls.push(url);
+    }
+    notifications.webhooks.on_cancel = "always";
+    notifications.webhooks.on_error = "always";
+    notifications.webhooks.on_start = "always";
+    notifications.webhooks.on_failure = "always";
+    notifications.webhooks.on_success = "always";
+
+    const newYml = updateYamlDocument({ notifications }, yml);
+    file.setContentSync(newYml);
     return Promise.resolve(project);
+}
+
+interface Notifications {
+    webhooks: {
+        urls: string[]
+        on_cancel?: string
+        on_error?: string
+        on_start?: string
+        on_failure?: string
+        on_success?: string,
+    };
+}
+
+function standardizeNotifications(existingNotifications: any): Notifications {
+    if (!existingNotifications) {
+        return { webhooks: { urls: [] } };
+    }
+    if (!existingNotifications.webhooks) {
+        return {
+            ...existingNotifications,
+            webhooks: { urls: [] },
+        };
+    }
+    if (typeof existingNotifications.webhooks === "string") {
+        return {
+            ...existingNotifications,
+            webhooks: { urls: [existingNotifications.webhooks] },
+        };
+    }
+    if (!existingNotifications.webhooks.urls) {
+        return {
+            ...existingNotifications,
+            webhooks: {
+                ...existingNotifications.webhooks,
+                urls: [],
+            },
+        };
+    }
+    if (typeof existingNotifications.webhooks.urls === "string") {
+        return {
+            ...existingNotifications,
+            webhooks: {
+                ...existingNotifications.webhooks,
+                urls: [existingNotifications.webhooks.urls],
+            },
+        };
+    }
+    return existingNotifications;
 }
 
 export function addWebhookToCircle(project: Project, url: string): Promise<Project> {
