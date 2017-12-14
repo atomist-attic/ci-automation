@@ -43,9 +43,11 @@ import { combineErrors } from "./EnableTravis";
 
 export type BuildSystem = "travis" | "jenkins" | "circle";
 
-@CommandHandler("Add the Atomist webhook to a project CI configuration", "add ci webhook")
+@CommandHandler("Add the Atomist webhook to a project CI configuration", AddWebhookToCI.Intent)
 @Tags("ci", "circle", "jenkins", "travis")
 export class AddWebhookToCI implements HandleCommand {
+
+    public static Intent = "add ci webhook";
 
     @Parameter({
         displayName: "Project CI Provider",

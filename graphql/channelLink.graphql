@@ -1,0 +1,22 @@
+subscription ChannelRepoLink {
+  ChannelLink {
+    channel @required {
+      channelId
+      name
+    }
+    repo @required {
+      owner
+      name
+      defaultBranch
+      org {
+        provider {
+          apiUrl
+          url
+        }
+        chatTeam {
+          id
+        }
+      }
+    }
+  }
+}
