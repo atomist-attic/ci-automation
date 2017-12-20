@@ -36,9 +36,9 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { CachingDirectoryManager } from "@atomist/automation-client/spi/clone/CachingDirectoryManager";
 
-import {CircleWebhook} from "../webhooks/CircleWebhook";
-import {JenkinsWebhook} from "../webhooks/JenkinsWebhook";
-import {TravisWebhook} from "../webhooks/TravisWebhook";
+import { CircleWebhook } from "../webhooks/CircleWebhook";
+import { JenkinsWebhook } from "../webhooks/JenkinsWebhook";
+import { TravisWebhook } from "../webhooks/TravisWebhook";
 import { combineErrors } from "./EnableTravis";
 
 export type BuildSystem = "travis" | "jenkins" | "circle";
@@ -82,7 +82,7 @@ export class AddWebhookToCI implements HandleCommand {
             .then(project => addWebhook(project, this.baseWebhookUrl, this.buildSystem, this.slackTeamId))
             .then(project => createCIWebhookPullRequest(project as GitProject))
             .then(success, err => {
-                const errResponse = `Failed to create PR adding ${this.buildSystem} Atomist webhook to build` +
+                const errResponse = `Failed to add Atomist webhook to ${this.buildSystem}` +
                     ` configuration: ${err.message}`;
                 return ctx.messageClient.respond(errResponse)
                     .then(() => failure(err), msgErr => failure(combineErrors(err, msgErr)));

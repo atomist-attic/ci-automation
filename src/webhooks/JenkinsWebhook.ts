@@ -1,10 +1,9 @@
+import { Project } from "@atomist/automation-client/project/Project";
+import { BuildSystem } from "../commands/AddWebhookToCI";
 
-import {Project} from "@atomist/automation-client/project/Project";
-import {BuildSystem} from "../commands/AddWebhookToCI";
-
-import {addWebhookToPipelineSection, getPipelineSection} from "../../src/webhooks/DeclarativeJenkinsfileGrammar";
-import {Webhook} from "../../src/webhooks/Webhook";
-import {addWebhookToNodes} from "./ScriptedJenkinsfileGrammar";
+import { addWebhookToPipelineSection, getPipelineSection } from "../../src/webhooks/DeclarativeJenkinsfileGrammar";
+import { Webhook } from "../../src/webhooks/Webhook";
+import { addWebhookToNodes } from "./ScriptedJenkinsfileGrammar";
 
 export class JenkinsWebhook implements Webhook {
 
@@ -33,6 +32,8 @@ export class JenkinsWebhook implements Webhook {
                     return jenkinsfile.setContent(newContent).then(() => project);
                 }
                 return project;
+            }, err => {
+                return Promise.reject(`Failed to get contents of Jenkins file '${this.jenkinsfilePath}'`);
             });
         }, err => {
             const msg = `Failed to find Jenkins file '${this.jenkinsfilePath}'`;
