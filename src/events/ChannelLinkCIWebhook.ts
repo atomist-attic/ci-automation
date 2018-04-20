@@ -49,7 +49,7 @@ export type NoneType = "none";
 export const None: NoneType = "none";
 export type BuildSystemOption = BuildSystem | NoneType;
 
-@EventHandler("Prompt to add webhook to CI configuration", GraphQL.subscriptionFromFile("graphql/channelLink"))
+@EventHandler("Prompt to add webhook to CI configuration", GraphQL.subscription("channelLink"))
 @Tags("ci")
 export class ChannelLinkCIWebhook implements HandleEvent<graphql.ChannelRepoLink.Subscription> {
 

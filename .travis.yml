@@ -1,30 +1,26 @@
 dist: trusty
-sudo: false
+sudo: required
+services:
+- docker
 language: node_js
 node_js:
-- 8.7.0
+- 9.5.0
 branches:
   except:
   - "/\\+travis\\.\\d+$/"
   - "/^\\d+\\.\\d+\\.\\d+-.*\\d+$/"
-addons:
-  apt:
-    sources:
-    - sourceline: "deb http://packages.cloudfoundry.org/debian stable main"
-      key_url: "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
-    packages:
-    - cf-cli
 env:
   global:
+  - ATOMIST_TEAM=T29E48P34
+  - NPM_PUBLISH=true
   - NPM_REGISTRY=https://atomist.jfrog.io/atomist/api/npm/npm-dev-local
   - secure: RI7ky0satYk14phJ0QhvmMOiG6oM4Ftz2lh5YGlC9RsSZ/jLdVdSraTDt0j6SM7yL2BG6gQ5g/ljyH/7Q/fyuwwJA9SNpreCN2glSIr1HJ9cmZzmzwyhzQN7gSNu1lpqh5KhyhguBJ4/YaNiB4d1WCaXt6jA4SU503/oZPzVhZLxag9wJvLnSs+9enHIos0yBPg3kgd2H85niGKuEd0/XKTqCKr6ZLPbB9MCDvOKk/lvMDyddME4YwSWjqowkP86f0VRP7NGWcrdy5y/sGORPNOUFAZ/UJ3TiiU/KHOM1fDF9cxE8nT3GAsSQw9du+dl3REVwzfiS8hMOjLDiWFMUjbfzi6YJdWh3tYlAEZUArhmXj3+r2rkKXa5kG9cAnQwu1HSnmph58MgtNij+9Kk/wnB/obGw5jjTNrc1g8GkDnI8qPUuVkvXVBX7VC2YBNAr7gz6RCgc/C2XGXxOAFTHoKLc29llQ8/l3ZRedc6GngiJU/cPrA+iE1/PE9atotjgMmidi2SH5tnG/qeqdIzY+Fc2c5MZKHOu+5PJa8YFyHGKj7mLYUvnufw+NCvcZq5JbEeLg005IlITT9o1mKEurlGaP5sm4/nD6gFG8XEu04AftDmCxJxZfr0T3NIXwN/6UmpFC/y8p93j1ujbED59oM5lkkGSIh7dlPs6Njyv+4=
-  - secure: sTIpAYpOcK8b/e6frbFRA+/f6hO2QcQo2LkdqtsfUV423P8v681q/KW7fBNnzpwXxVNR4yajfRof1oH2NLwWOrNa1yy5Gmx3KXkK5EqBbhpqYySp64LstlN0nVYi2kcznnLCbUdYorvfQp+D/H3tnzNtvzuM6HLjKfl5V+h6HR17zItpIjO61+AF5Sb7IQb1KCbfvsH48m8W8Le4cu6oBAbjK3xoOpZfzM37evobrwV3VGJieFjjIgTgB6agb6u50/Y4EVyb7I8EVspPSzUoVSbPKzF8TBCPral9QCNizkFQdT1IzwdCr1Sd296K/YVv0BWlP8PKlSt/fqul3q+MAHCGzHbmv1G4PCsxNNfz+u/QgtuGowofE6848Sm+Y0yQOjIj5Layk4LZW/9b02dDLs8665HGelWaQcVj/MNogllcLWxvZfUR+G9tSjTL0vUCPXYqPIJapFe1cfubsvoM1bp+FWnZxUsrtcAm/ppZXqeZ44nbOXJnBNbQVyJhJ6FH/L6bqN/43+ahvVQxJ4nIPdfKJuyrdrCWbBGOMKWzTh8KJnpLpYKja4lBdy2mWxKYvZDsufcexfm5JXKLuxp+qTDBw8k+aXzU0oFZQrT5bvx2B3rrn2dV2LJBrqznXdUW0TqNY9bP6/wzOKwBqVXggthcIg19YudvcNn/OjUA82U=
-  - secure: Q9HpOUvp4oPkMXody1f4WJLTlrrsx5TQhH19/3qxzrEgDWNytonDeCcl54qtgqkhbQl93PE0PXLPOUpNj1ZlCoB1Agnp29xYi1OKrNIxo1yYU22zI0hB263deYUZkrHWnQrnyVwjtbp+JVvrps8vzdDjo9+HFCNZqvpPcphCeqtW85vx8YA+ZY3eMuM7/tEL7Scgr+TJDHTYdIOiMKv6DBTkLNnp5DnoxZXbGolX44eCeAU3BBiSE/N/yGsqUWw1RBlqAgVGG1YWGwvFQ0ec+VM8wYXiPa2sE04WnA7N4HbUbsSDwqqVmv56Gp7fac0YsZAxKLWN8i3JBlW3TVv2+j6Qy+ony8S8GBTRWK+G+PZOTkyirGbV6eizbyZsV7Bdx6HRZumMdK11RFo0M18orlP0ytTc1i5WAHxzdj3h779fe87PUbBt8qEajGYQf42imTME7qHzszjsaCTcqZgRdQzW+1w+KcSr512G1we4pCP7FM2ZawaKYCJCSnUH2Xb3n7YvR6yuTJ17qsh9YNNc1YpTfY2ePd40z/s9+EkQJYsZLTnBkiIaQ+FMHr9CT9rzdKURGTOS4Yij1zBOKfo3hx8NVF+MScFkJQY+JRzo6HRVnGh7NMpCkgnhx7mhssWwc74nRIlgWjFgCtjwei8mxwW0KK6n41NhA6e/5NLjdOY=
-  - CF_ORG=atomist
+  - DOCKER_REGISTRY=atomist
+  - DOCKER_USER=atomist
+  - secure: Wm9XO+j+FRqOfhJ0bkLsOd9NJ7DBXWcD33MZKhQqfZhbHsyLp48rAot+/jL5YRQXcQjV08uwxHDzfjJQXQlNs8609gKpgSs2/fMX4HYVvWRdFqAsUSIXYoDDk8G8fuqiM6lWveciSxJCvB0xjg44QomtxCJc4o+rRDcrvOuVQjGMWjeiOTfjgQqAoemamb6C0/mMQyz8qVobHQMJoByO4lumtOwsbj0ZOMv5QJziUlwxBTLuCg9OZf7RPjGS2sj7kxIMY2PipifZ7QBqCm61IiGNNKRlfE33YMLfodQujjA4L5XrCFzcps0p9i9MkpS2JCMmIWpCNSnU9iRgQeqiSf98lcj+oBXUR0m2cirtkglCNuhI8AnIl2PTLcJlSbpRubIjnqKeCOMqWIVozzpiJ7XoJoZPGVzEJjzovR30YUP3veUhWHSSaLNykjFlu7Q8whsqcUPqCBrh2pMHyhyUEtha3VUoLNAB6HWS+T58V5v2TNzNTpBbHRjIG8NbAosFvPBWtMZymLQTPuZgKNlMfLhQ7GeR/flrTlh+cMACNPCgoVrkd3HpeQQjAl+EhRmGsphPkTSh50X/WTYTye9SomU3X9OtiusXgVVlIHTGhnmsm4oXR4Rp41YunBW/DoPGw7/V+RgZeU+1a6oKHStBBjRrPB4pR+5KJY59esdd6rY=
 before_install:
-- "rm -f $HOME/.npm/_logs/*-debug.log"
 - openssl aes-256-cbc -K $encrypted_536606bad75a_key -iv $encrypted_536606bad75a_iv
-  -in scripts/.npmrc.enc -out $HOME/.npmrc -d
+  -in .npmrc.enc -out .npmrc -d
 script: bash scripts/travis-build.bash
 notifications:
   email: false
@@ -36,9 +32,6 @@ notifications:
     on_start: always
     on_cancel: always
     on_error: always
-cache:
-  directories:
-  - "$HOME/.npm"
 before_deploy:
 - touch build/typedoc/.nojekyll
 deploy:
