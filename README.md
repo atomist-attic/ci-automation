@@ -2,6 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/%40atomist%2Fci-automation.svg)](https://badge.fury.io/js/%40atomist%2Fci-automation)
 [![Build Status](https://travis-ci.org/atomist/ci-automation.svg?branch=master)](https://travis-ci.org/atomist/ci-automation)
+[![Docker Pulls](https://img.shields.io/docker/pulls/atomist/ci-automation.svg)](https://hub.docker.com/r/atomist/ci-automation/)
 
 This repository contains Atomist automation for continuous integration
 platforms like [Travis CI][travis-ci] and [CircleCI][circleci].  These
@@ -23,14 +24,54 @@ the [Atomist Developer Guide][dev].
 [docs]: https://docs.atomist.com/ (Atomist User Guide)
 [dev]: https://docs.atomist.com/developer/ (Atomist Developer Guide)
 
-### Slack and GitHub
+### GitHub account
 
-Atomist automations work best when connected to [Slack][slackhq]
-and [GitHub][gh].  If you do not have access to a Slack team and/or
-GitHub organization, it is easy to create your own.
+You must have a GitHub account, either GitHub.com or GitHub Enterprise
+(GHE).  If you want to use Atomist with GHE, please [contact
+Atomist](mailto:support@atomist.com).  The remainder of these
+instructions assume you have a GitHub.com account.  If you do not
+already have a GitHub.com account, you can [create
+one][github-create].
 
--   Create a [Slack team][slack-team]
--   Create a [GitHub organization][gh-org]
+[github-create]: https://github.com/join (Join GitHub)
+
+### Atomist workspace
+
+You also need to sign up with Atomist and create a workspace.  Once
+you have a GitHub.com account, you can sign up with Atomist at
+[https://app.atomist.com/][atm-app].  Once you are registered with
+Atomist, you can create an Atomist workspace and add your GitHub user
+and/or organizations to that workspace.
+
+[atm-app]: https://app.atomist.com/ (Atomist Web Interface)
+
+### Kubernetes
+
+This automation works with [Kubernetes][kube], so you need a
+Kubernetes cluster with a functioning ingress controller, such as
+[ingress-nginx][].
+
+If you do not have access to a Kubernetes cluster, you can create one
+on your local system using [minikube][].  Once you have minikube
+running, you can create an ingress controller in the cluster using the
+ingress add-on.
+
+```console
+$ minikube start
+$ minikube addons enable ingress
+```
+
+[kube]: https://kubernetes.io/ (Kubernetes)
+[ingress-nginx]: https://github.com/kubernetes/ingress-nginx (Ingress nginx)
+[minikube]: https://kubernetes.io/docs/getting-started-guides/minikube/ (Minikube)
+
+### Slack
+
+Atomist has a powerful [Slack][slackhq] application, allowing you to
+see and act on your development activity right in Slack.  Slack is
+_not_ a requirement for using Atomist, but if you try it, you'll
+probably like it.  If you do not have access to a Slack team, it is
+easy to [create your own][slack-team].
 
 In your Slack team, install the Atomist app in Slack, click the button
 below.
@@ -44,32 +85,68 @@ below.
 Once installed, the Atomist bot will guide you through connecting
 Atomist, Slack, and GitHub.
 
-If you'd rather not set up your own Slack team and GitHub
-organization, please reach out to members of Atomist in the `#support`
-channel of [atomist-community Slack team][slack].  You'll receive an
-invitation to a [Slack team][play-slack]
-and [GitHub organization][play-gh] that can be used to explore this
-new approach to writing and running automations.
-
-> _The Slack team ID for atomist-playground is `T7GMF5USG`._
-
 [slackhq]: https://slack.com/ (Slack)
-[gh]: https://github.com/ (GitHub)
 [slack-team]: https://slack.com/get-started#create (Create a Slack Team)
-[gh-org]: https://github.com/account/organizations/new (Create a GitHub Organization)
-[play-slack]: https://atomist-playground.slack.com (Atomist Playground Slack)
-[play-gh]: https://github.com/atomist-playground (Atomist Playground GitHub Organization)
+
+## Running
+
+The automations provided by this package are run globally by Atomist
+so you only have to run this yourself if you wish to customize its
+behavior.
+
+You can use the Kubernetes resource files in the [kube
+directory][kube] as a starting point for deploying this automation in
+your Kubernetes cluster.  Before deploying this automation, you will
+need to create a secret with the automation configuration.  The only
+required configuration values are the `teamIds` and `token`.  The
+`teamIds` should be your Atomist team ID(s), which you can get from
+the settings page for your Atomist workspace or by sending `team` as a
+message to the Atomist bot, e.g., `@atomist team`, in Slack.  The
+`token` should be a [GitHub personal access token][ghpat] with
+`read:org` and `repo` scopes.
+
+```console
+$ kubectl create secret generic automation \
+    --from-literal=config='{"teamIds":["TEAM_ID"],"token":"TOKEN"}'
+```
+
+In the above commands, replace `TEAM_ID` with your Atomist team ID,
+and `TOKEN` with your GitHub token.
+
+To deploy the automation, run the following command:
+
+```console
+$ kubectl apply -f https://raw.githubusercontent.com/atomist/ci-automation/master/assets/kube/deployment.yaml
+```
+
+[kube]: ./assets/kube/ (ci-automation Kubernetes Resources)
+[ghpat]: https://github.com/settings/tokens (GitHub Personal Access Tokens)
+
+## Support
+
+General support questions should be discussed in the `#support`
+channel in our community Slack team
+at [atomist-community.slack.com][slack].
+
+If you find a problem, please create an [issue][].
+
+[issue]: https://github.com/atomist/ci-automation/issues
+
+## Development
+
+Before developing this project, you will need to install Node.js and
+configure your environment.
 
 ### Node.js
 
 You will need to have [Node.js][node] installed.  To verify that the
 right versions are installed, please run:
 
-```
+```console
 $ node -v
-v8.4.0
+v9.7.1
 $ npm -v
-5.4.1
+5.6.0
 ```
 
 The `node` version should be 8 or greater and the `npm` version should
@@ -82,7 +159,7 @@ be 5 or greater.
 To get started run the following commands to clone the project,
 install its dependencies, and build the project:
 
-```
+```console
 $ git clone git@github.com:atomist/ci-automation.git
 $ cd ci-automation
 $ npm install
@@ -95,7 +172,7 @@ If this is the first time you will be running an Atomist API client
 locally, you should first configure your system using the `atomist`
 script:
 
-```
+```console
 $ `npm bin`/atomist config
 ```
 
@@ -104,10 +181,10 @@ automations running in and creates
 a [GitHub personal access token][token] with "repo" and "read:org"
 scopes.
 
-The script will prompt you for you Slack team ID, or you can supply it
-using the `--slack-team TEAM_ID` command-line option.  You must run
-the automations in a Slack team of which you are a member.  You can
-get the Slack team ID by typing `team` in a DM to the Atomist bot.
+The script will prompt you for your Atomist workspace/team ID, or you
+can supply it using the `--team TEAM_ID` command-line option.  You can
+get your Atomist team ID from the settings page for your Atomist
+workspace or by typing `team` in a DM to the Atomist bot.
 
 The script will prompt you for your GitHub credentials.  It needs them
 to create the GitHub personal access token.  Atomist does not store
@@ -122,27 +199,39 @@ token when performing any operations that access the GitHub API.
 
 [token]: https://github.com/settings/tokens (GitHub Personal Access Tokens)
 
-## Starting up the automation-client
+### Running locally
 
-To start the client, run the following command:
+You can run this automation client locally, allowing you to change the
+source code of this project and immediately see the effects in your
+environment with the following command
 
-```
+```console
 $ npm run autostart
 ```
 
-## Support
+To run in a more traditional manner, build the project and then simple
+start it.
 
-General support questions should be discussed in the `#support`
-channel in our community Slack team
-at [atomist-community.slack.com][slack].
+```console
+$ npm run build
+$ npm start
+```
 
-If you find a problem, please create an [issue][].
+To download and run the Docker image of this project, run the
+following command
 
-[issue]: https://github.com/atomist/ci-automation/issues
+```console
+$ docker run --rm -e GITHUB_TOKEN=YOUR_TOKEN -e ATOMIST_TEAMS=TEAM_ID \
+    atomist/ci-automation:VERSION
+```
 
-## Development
+replacing `YOUR_TOKEN` and `TEAM_ID` with the token and team ID from
+your `~/.atomist/client.config.json` created by the `atomist config`
+command and `VERSION` with the [latest release of this repo][latest].
+Note that this will not be running any code from your local machine
+but the code in the Docker image.
 
-You will need to install [node][] to build and test this project.
+[latest]: https://github.com/atomist/ci-automation/releases/latest
 
 ### Build and Test
 
@@ -160,16 +249,18 @@ Command | Reason
 
 ### Release
 
-To create a new release of the project, simply push a tag of the form
-`M.N.P` where `M`, `N`, and `P` are integers that form the next
-appropriate [semantic version][semver] for release.  The version in
-the package.json must be the same as the tag.  For example:
+To create a new release of the project, update the version in
+package.json and then push a tag for the version.  The version must be
+of the form `M.N.P` where `M`, `N`, and `P` are integers that form the
+next appropriate [semantic version][semver] for release.  The version
+in the package.json must be the same as the tag.  For example:
 
 [semver]: http://semver.org
 
-```
-$ git tag -a 1.2.3
-$ git push --tags
+```console
+$ npm version 1.2.3
+$ git tag -a -m 'The ABC release' 1.2.3
+$ git push origin 1.2.3
 ```
 
 The Travis CI build (see badge at the top of this page) will publish
@@ -182,5 +273,5 @@ the contents of the release notes.
 Created by [Atomist][atomist].
 Need Help?  [Join our Slack team][slack].
 
-[atomist]: https://www.atomist.com/ (Atomist - Development Automation)
-[slack]: https://join.atomist.com (Atomist Community Slack)
+[atomist]: https://atomist.com/ (Atomist - How Teams Deliver Software)
+[slack]: https://join.atomist.com/ (Atomist Community Slack)
