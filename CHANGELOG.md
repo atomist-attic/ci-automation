@@ -7,11 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][]
 
-[Unreleased]: https://github.com/atomist/ci-automation/compare/0.3.1...HEAD
+[Unreleased]: https://github.com/atomist/ci-automation/compare/0.4.0...HEAD
+
+## [0.4.0][]
+
+[0.4.0]: https://github.com/atomist/ci-automation/compare/0.3.1...0.4.0
+
+Kubernetes release
+
+### Added
+
+-   Handler to add Atomist webhook to CI configs [#1][1]
+-   Docker and Kubernetes build and configuration [#7][7]
+
+### Fixed
+
+-   Handling of multiple errors
+-   Running on MS Windows
+
+[1]: https://github.com/atomist/ci-automation/issues/1
+[7]: https://github.com/atomist/ci-automation/issues/7
 
 ## [0.3.1][]
 
-[0.3.1]: https://github.com/atomist/ci-automation/compare/0.3.1...0.3.1
+[0.3.1]: https://github.com/atomist/ci-automation/compare/0.3.0...0.3.1
 
 Spring release
 
