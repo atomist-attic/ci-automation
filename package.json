@@ -20,12 +20,13 @@
     "travis"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.13.1",
+    "@atomist/automation-client": "^0.14.1",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/yaml-updater": "^0.2.0",
     "@types/js-yaml": "^3.10.1",
     "app-root-path": "^2.0.1",
     "axios": "^0.17.1",
+    "lodash": "^4.17.10",
     "logzio-nodejs": "^0.4.6",
     "serialize-error": "^2.1.0",
     "winston-logzio": "^1.0.4"
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
     "@types/axios-mock-adapter": "^1.9.0",
+    "@types/lodash": "^4.14.108",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.58",
     "@types/power-assert": "^1.4.29",
@@ -48,10 +50,10 @@
     "rimraf": "^2.6.2",
     "supervisor": "^0.12.0",
     "ts-node": "^3.3.0",
-    "tslint": "^5.4.3",
-    "typedoc": "^0.9.0",
-    "typescript": "2.5.3",
-    "typescript-formatter": "^6.0.0"
+    "tslint": "^5.9.1",
+    "typedoc": "^0.11.1",
+    "typescript": "^2.8.3",
+    "typescript-formatter": "^7.2.0"
   },
   "directories": {
     "test": "test"
