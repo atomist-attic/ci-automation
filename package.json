@@ -20,7 +20,7 @@
     "travis"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.14.1",
+    "@atomist/automation-client": "^0.16.0",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/yaml-updater": "^0.2.0",
     "@types/js-yaml": "^3.10.1",
