@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][]
 
-[Unreleased]: https://github.com/atomist/ci-automation/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/atomist/ci-automation/compare/0.5.0...HEAD
+
+## [0.5.0][]
+
+[0.5.0]: https://github.com/atomist/ci-automation/compare/0.4.0...0.5.0
+
+SDM release
+
+### Added
+
+-   Resources for SDM build and deployment
+
+### Removed
+
+-   Travis CI resources
 
 ## [0.4.0][]
 
