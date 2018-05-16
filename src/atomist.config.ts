@@ -15,7 +15,6 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
-
 import { configureLogzio } from "./util/logzio";
 
 export const configuration: Configuration = {
