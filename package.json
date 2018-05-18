@@ -1,6 +1,6 @@
 {
   "name": "@atomist/ci-automation",
-  "version": "0.5.16",
+  "version": "0.5.17",
   "description": "Continuous integration automations",
   "author": "Atomist",
   "license": "Apache-2.0",
