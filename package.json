@@ -1,6 +1,6 @@
 {
   "name": "@atomist/ci-automation",
-  "version": "0.5.14",
+  "version": "0.5.15",
   "description": "Continuous integration automations",
   "author": "Atomist",
   "license": "Apache-2.0",
@@ -19,7 +19,8 @@
     "travis"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.16.0",
+    "@atomist/automation-client": "https://r.atomist.com/BJxzuM1V20G",
+    "@atomist/automation-client-ext-logzio": "0.1.0-20180518141306",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/yaml-updater": "^0.2.0",
     "@types/js-yaml": "^3.10.1",
